@@ -1,2 +1,2 @@
 # mycoins
-Personal collection of novel token experiments.
+Personal collection of novel token playaround and changeabout.
