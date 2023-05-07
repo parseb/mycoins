@@ -10,7 +10,7 @@ contract ERC20GM is ERC20, IERC20GM {
     uint256 public price;
 
     //// price -> signal
-    mapping(uint256 => uint256) priceSignal;
+    mapping(uint256 => uint256) public priceSignal;
 
     //// agent -> sigID : sigStrength
     mapping(address => uint256[2]) agentSignal;
@@ -25,6 +25,7 @@ contract ERC20GM is ERC20, IERC20GM {
     error ValueMismatch();
     error BurnRefundF();
     error InvalidPrice();
+    error BurnFailed();
 
     ////////////////// External
 
@@ -58,16 +59,22 @@ contract ERC20GM is ERC20, IERC20GM {
     }
 
     //// @inheritdoc IERC20GM
-    function burn(uint256 howMany_) external {
-        uint256 amount = refundQtFor(howMany_);
+    function burn(uint256 howMany_) external returns (uint256 amount) {
+        amount = refundQtFor(howMany_);
         _burn(msg.sender, howMany_);
-        (bool s,) = msg.sender.call{value: amount}("");
+        (bool s,) = payable(msg.sender).call{value: amount}("");
         if (!s) revert BurnRefundF();
+    }
+
+    function burnOnly(uint256 amount) external {
+        uint256 initial = totalSupply();
+        _burn(msg.sender, amount);
+        if (!(initial - totalSupply() <= totalSupply())) revert BurnFailed();
     }
 
     //// @inheritdoc IERC20GM
     function signal(uint256 price_) external returns (uint256) {
-        if (price > price_) revert InvalidPrice();
+        if (price >= price_) revert InvalidPrice();
         uint256 pre = agentSignal[msg.sender][0];
         if (pre > 0 && priceSignal[pre] > 0) priceSignal[pre] -= agentSignal[msg.sender][1];
         agentSignal[msg.sender][0] = price_;
@@ -93,8 +100,14 @@ contract ERC20GM is ERC20, IERC20GM {
         return howMany_ * price;
     }
 
+    //// @inheritdoc IERC20GM
     function refundQtFor(uint256 howMany_) public view returns (uint256) {
-        return howMany_ * (address(this).balance / totalSupply());
+        return howMany_ * address(this).balance / totalSupply();
+    }
+
+    //// @inheritdoc IERC20GM
+    function howManyForThisETH(uint256 ethAmount_) public view returns (uint256) {
+        return ethAmount_ / price;
     }
 
     //// @inheritdoc IERC20GM
@@ -106,8 +119,6 @@ contract ERC20GM is ERC20, IERC20GM {
     function signalOf(address whom_) external view returns (uint256[2] memory) {
         return agentSignal[whom_];
     }
-
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {}
 
     function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
         if (from != address(0)) {
@@ -126,4 +137,6 @@ contract ERC20GM is ERC20, IERC20GM {
             }
         }
     }
+
+    receive() external payable {}
 }

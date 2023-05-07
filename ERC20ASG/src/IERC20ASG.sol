@@ -12,6 +12,9 @@ interface IERC20ASG is IERC20 {
     //// @param howMany_ amount to burn
     function burn(uint256 howMany_) external;
 
+    //// @notice burns, from sender. Does not return undelying value.
+    function burnOnly(uint256 amount) external;
+    
     //// @notice returns current price per unit
     function currentPrice() external view returns (uint256);
 
@@ -22,4 +25,8 @@ interface IERC20ASG is IERC20 {
     //// @notice returns cost for burn for given amount at current block
     //// @param amt_ amount of units to calculate price for
     function burnReturns(uint256 amt_) external view returns (uint256);
+    
+     //// @notice how many of this does ethAmount get you
+    //// @param ethAmount_ amount of eth proposed as countervalue
+    function howManyForThisETH(uint256 ethAmount_) external view returns (uint256);
 }

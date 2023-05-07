@@ -63,4 +63,37 @@ contract GMinitTest is Test, Stage {
 
         //// ####
     }
+
+    function testOnlyBurn() public {
+        address A = address(12154564565542);
+        vm.deal(A, 10 ether);
+        vm.prank(A);
+        uint256 howM = iGM.howManyForThisETH(1 ether);
+        uint256 howM2 = iGM.howMuchFor(howM);
+        //// 14492753623188405  -  999999999999999945
+        console.log(howM, " - ", howM2);
+        vm.prank(A);
+        iGM.mint{value: (howM2)}(howM);
+        uint256 bal1 = iGM.balanceOf(A);
+        uint256 bal2 = A.balance;
+        vm.stopPrank();
+        uint256 snap = vm.snapshot();
+
+        uint256 toBa = iGM.balanceOf(A);
+        assertTrue(toBa > 0);
+        uint256 expected = iGM.refundQtFor(toBa);
+        assertTrue(expected > 1);
+        console.log("burns: ", toBa, " expected ", expected);
+        vm.prank(A);
+        uint256 returnedA = iGM.burn(toBa);
+        assertTrue(returnedA == expected);
+
+        assertTrue(iGM.balanceOf(A) == 0, "nothing retured");
+        assertTrue(A.balance > bal2);
+
+        vm.revertTo(snap);
+        vm.prank(A);
+        iGM.burnOnly(howM);
+        assertFalse(iGM.balanceOf(A) > bal1, "nothing retured");
+    }
 }

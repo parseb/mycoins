@@ -60,6 +60,11 @@ contract ERC20ASG is ERC20, IERC20ASG {
         (bool s,) = msg.sender.call{value: amount}("");
         if (!s) revert BurnRefundF();
     }
+    
+    //// @inheritdoc IERC20GM
+    function burnOnly(uint256 amount) external {
+    	require(_burn(msg.sender, amount));
+    }
 
     //// @notice returns current price per unit
     function currentPrice() public view returns (uint256) {
@@ -72,5 +77,10 @@ contract ERC20ASG is ERC20, IERC20ASG {
 
     function burnReturns(uint256 amt_) public view returns (uint256) {
         if (totalSupply() > 0) return address(this).balance * amt_ / totalSupply();
+    }
+    
+    //// @inheritdoc IERC20GM
+    function howManyForThisETH(uint256 ethAmount_) public view returns (uint256) {
+        return ethAmount_ / price; 
     }
 }
