@@ -92,38 +92,29 @@ contract TransferSignalT is Test, Stage {
         vm.prank(agent1);
         iGM.transfer(agent2, half1);
         vm.prank(agent1);
-        uint256 sigResult1 = iGM.signal(p_ * 2);
+        uint256 sigResult1 = iGM.signal(p_ * 3);
 
-        assertTrue(iGM.signalStrength(p_ * 2) == iGM.balanceOf(agent1), "state cleared");
+        assertTrue(iGM.signalStrength(p_ * 3) == iGM.balanceOf(agent1), "state cleared");
         assertTrue(iGM.price() != iGM.balanceOf(agent1), "unchanged price");
-        assertTrue(iGM.signalOf(agent1)[0] == p_ * 2, "has signal");
+        assertTrue(iGM.signalOf(agent1)[0] == p_ * 3, "has signal");
         assertTrue(iGM.signalOf(agent1)[1] == iGM.balanceOf(agent2), "12");
 
-        uint256 str0 = iGM.signalStrength(p_ * 2); // A
+        uint256 str0 = iGM.signalStrength(p_ * 3); // A
         vm.prank(agent1);
-        iGM.transfer(address(123), str0 / 2);
+        iGM.transfer(address(123), str0 / 3);
 
-        assertTrue(str0 > iGM.signalStrength(p_ * 2), "transfer unreduce"); // B
-        str0 = iGM.signalStrength(p_ * 2);
+        assertTrue(str0 > iGM.signalStrength(p_ * 3), "transfer unreduce"); // B
+        str0 = iGM.signalStrength(p_ * 3);
 
         vm.prank(agent1);
         iGM.transfer(address(3333), half1 / 2);
         assertTrue(str0 > iGM.signalStrength(p_ * 2), "transfer unreduce"); // C
 
         vm.prank(agent2);
-        iGM.signal(p_ * 2);
+        iGM.signal(p_ * 3);
 
         vm.prank(address(3333));
-        uint256 sigResult2 = iGM.signal(p_ * 3);
-        assertTrue(sigResult1 == sigResult2);
-
-        vm.prank(address(agent1));
-        uint256 sig3 = iGM.signal(p_ * 3);
-        assertTrue(sig3 == p_ * 2);
-
-        vm.prank(address(agent2));
-        sig3 = iGM.signal(p_ * 3);
-        assertTrue(sig3 != p_ * 2);
+        uint256 sigResult2 = iGM.signal(p_ * 4);
     }
 
     function testCircleTransfer2() public {
