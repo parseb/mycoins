@@ -20,8 +20,9 @@ contract GMinitTest is Test, Stage {
 
         beneficiaries[0] = address(1337);
         amounts[0] = 100 ether;
-        address instance =
-            address(new ERC20ASG("ERC20 Algo Stable Price Linear Up Only Coin", "ASG", 3,1, beneficiaries, amounts));
+        address instance = address(
+            new ERC20ASG("ERC20 Algo Stable Price Linear Up Only Coin", "ASG", 3,1, 10_000, beneficiaries, amounts)
+        );
         iGM = IERC20ASG(instance);
         assertTrue(address(iGM).code.length > 0, "codesize is 0");
     }
@@ -33,8 +34,9 @@ contract GMinitTest is Test, Stage {
 
         beneficiaries[0] = address(1337);
         amounts[0] = 100 ether;
-        address instance =
-            address(new ERC20ASG("ERC20 Algo Stable Price Linear Up Only Coin", "ASG", p_ ,1, beneficiaries, amounts));
+        address instance = address(
+            new ERC20ASG("ERC20 Algo Stable Price Linear Up Only Coin", "ASG", p_ ,1, 10_000, beneficiaries, amounts)
+        );
         iGM = IERC20ASG(instance);
 
         assertTrue(address(iGM).code.length > 0, "codesize is 0");

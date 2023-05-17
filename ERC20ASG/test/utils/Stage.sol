@@ -17,13 +17,13 @@ contract Stage is Test {
         // amounts[1] = 1 ether;
         // amounts[2] = 2 ether;
 
-        return address(new ERC20ASG("Linear Valuable Token", "LVT", 1, 1, beneficiaries, amounts));
+        return address(new ERC20ASG("Linear Valuable Token", "LVT", 1, 1, 10_000, beneficiaries, amounts));
     }
 
     function InitDefaultWithPrice(uint256 p_, address[] memory beneficiaries_, uint256[] memory amounts_)
         public
         returns (address)
     {
-        return address(new ERC20ASG("Linear Valuable Token", "LVT", p_, 1, beneficiaries_, amounts_));
+        return address(new ERC20ASG("Linear Valuable Token", "LVT", p_, 1, 10_000, beneficiaries_, amounts_));
     }
 }
