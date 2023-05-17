@@ -1,0 +1,3 @@
+[submodule "ERC20GM/lib/properties"]
+	path = ERC20GM/lib/properties
+	url = https://github.com/crytic/properties
